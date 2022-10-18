@@ -65,30 +65,69 @@
             })
             .then((data) => {
                 return data.json();
-                //  console.log('ssss',data)
+              
             }).then((dataresp) => {
                 let data1 = ""
 
                 let arry = dataresp.data[0].route_latlong;
+                // starting time lat & lng
+                const st_time = arry[0].timestamp
+                console.log('time ', st_time)
+
+                let month1 = new Date(st_time).getUTCMonth() + 1 //months from 1-12
+
+                let day1 = new Date(st_time).getUTCDate()
+
+                let year1 = new Date(st_time).getUTCFullYear()
+
+                let effective_date1 = st_time.split("T");
+
+                let Opening_Date_Time1 = day1 + '/' + month1 + '/' + year1 + ' ' + effective_date1[1].split("+")[0];
+
+                let start_Date = Opening_Date_Time1.split(".")[0];
+                console.log(start_Date, 'Start time')
+
+
+
+
+                // End time lat & lng
                 const val = arry[arry.length - 2];
-                console.log("====+++++", val.timestamp);
+                // console.log("====+++++", val.timestamp);
                 const dateformate = val.timestamp
-                const date = new Date(dateformate.replace(' ','T') + 'Z');
-                console.log('fomate date ',date)
+                const dt_fmt = dateformate.split('T')
+                // console.log('sadanand', dt_fmt[0])
 
-               
+                let month = new Date(dateformate).getUTCMonth() + 1 //months from 1-12
 
-                    //console.log("array data",dataresp.data[0].route_latlong)
-                    // console.log("array length",dataresp.data[0].route_latlong.length)
-                    // let arrlength =  dataresp.data[0].route_latlong.length;
-                    // for(var a = arrlength; a<=0;a--){
-                    //     console.log("rev data", dataresp.data[0].route_latlong[a])
-                    // }
-                    dataresp.data.map((item) => {
+                let day = new Date(dateformate).getUTCDate()
 
-                        console.log(item.route_latlong.length, 'wwwwww')
+                let year = new Date(dateformate).getUTCFullYear()
 
-                        data1 = `
+                let effective_date = dateformate.split("T");
+
+                let Opening_Date_Time = day + '/' + month + '/' + year + ' ' + effective_date[1].split("+")[0];
+
+                let ExtractedFormatedDateL = Opening_Date_Time.split(".")[0];
+                console.log(ExtractedFormatedDateL, 'End time')
+
+
+
+
+
+
+
+
+                //console.log("array data",dataresp.data[0].route_latlong)
+                // console.log("array length",dataresp.data[0].route_latlong.length)
+                // let arrlength =  dataresp.data[0].route_latlong.length;
+                // for(var a = arrlength; a<=0;a--){
+                //     console.log("rev data", dataresp.data[0].route_latlong[a])
+                // }
+                dataresp.data.map((item) => {
+
+                    console.log(item.route_latlong.length, 'wwwwww')
+
+                    data1 = `
                 <nav class="navbar navbar-expand-lg bg-light shadow-sm">
                 <div class="container-fluid">
                     <img class="navbar-brand" src='image/logovishal.png' style="height:80px; width: 90px;"></img>
@@ -144,7 +183,7 @@
                                                     
                                                     <img class="navbar-brand" src='image/clock-regular.svg'
                                                         style="height:20px; width: 20px;"> Delivery time</div>
-                                            <b>Started at :</b>  ${item.route_latlong[0]?.timestamp} &nbsp; <br> <b>End at :</b> ${val?.timestamp}
+                                            <b>Started at :</b>  ${start_Date ? start_Date : 'N/A' }  &nbsp;  <br> <b>End at :</b> ${ExtractedFormatedDateL ? ExtractedFormatedDateL : 'N/A'}
                                             
                                      
 
@@ -163,14 +202,14 @@
 
                 </div>
             </div>`;
-                    })
+                })
 
-                    document.getElementById("one_1", "map").innerHTML = data1
+                document.getElementById("one_1", "map").innerHTML = data1
 
 
-                }).catch(err =>
-                    console.error(err, 'qweqwqweqwq')
-                );
+            }).catch(err =>
+                console.error(err, 'qweqwqweqwq')
+            );
 
         // }, 5000);
 
