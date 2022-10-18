@@ -1,5 +1,38 @@
 {
+  "name": "traker",
+  "version": "1.0.0",
+  "description": "A traker app in nodejs ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "siddharth",
+  "license": "ISC",
   "dependencies": {
-    "react-html-document": "^3.1.0"
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "cors": "^2.8.5",
+    "es6-model": "^1.0.2",
+    "express": "^4.18.1",
+    "knex": "^2.3.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "netlify-lambda": "^2.0.15",
+    "nodemon": "^2.0.20",
+    "pm2": "^5.2.0",
+    "serverless-http": "^3.0.2",
+    "sqlite3": "^5.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/legion1729/traker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/legion1729/traker/issues"
+  },
+  "homepage": "https://github.com/legion1729/traker#readme",
+  "devDependencies": {
+    "netlify-cli": "^11.8.2"
   }
 }
