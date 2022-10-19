@@ -31,12 +31,12 @@
         crossorigin="anonymous"></script>
 
 
-    <script
+    <!-- <script
         src="https://apis.mappls.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk?layer=vector&v=3.0&callback=initMap1"></script>
     <script
         src="https://apis.mappls.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0"></script>
     <script
-        src="https://apis.mapmyindia.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0&libraries=direction"></script>
+        src="https://apis.mapmyindia.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0&libraries=direction"></script> -->
 </head>
 
 
@@ -47,87 +47,124 @@
     </div>
     <script>
 
-        var locSource = {};
+        function loadScript(callback) {
+            // adding the script element to the head as suggested before
 
-        var queryParams = window.location.search;
-        var listQueries = queryParams.split("&");
-        let params = new URLSearchParams(window.location.search)
-        console.log("queryParams", params.get('id'))
+            fetch(`http://65.1.129.194:3000/token`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
+                    },
 
-        fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
-            {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
-                },
+                })
+                .then((data) => {
+                    return data.json();
+                    //  console.log('ssss',data)
+                }).then((dataresp) => {
 
-            })
-            .then((data) => {
-                return data.json();
-              
-            }).then((dataresp) => {
-                let data1 = ""
+                    const urlArray = ['https://apis.mappls.com/advancedmaps/api/api-token/map_sdk?layer=vector&v=3.0&callback=initMap1',
+                        'https://apis.mappls.com/advancedmaps/api/api-token/map_sdk_plugins?v=3.0',
+                        'https://apis.mapmyindia.com/advancedmaps/api/api-token/map_sdk_plugins?v=3.0&libraries=direction']
 
-                let arry = dataresp.data[0].route_latlong;
-                // starting time lat & lng
-                const st_time = arry[0].timestamp
-                console.log('time ', st_time)
+                    urlArray.forEach(e => {
+                        var head = document.getElementsByTagName('head')[0];
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
 
-                let month1 = new Date(st_time).getUTCMonth() + 1 //months from 1-12
+                        script.src = e.replace('api-token', dataresp.data[0].token.access_token);
 
-                let day1 = new Date(st_time).getUTCDate()
+                        // then bind the event to the callback function 
+                        // there are several events for cross browser compatibility
+                        script.onreadystatechange = callback;
+                        // script.onload = callback;
+                        head.appendChild(script);
+                    })
+                })
 
-                let year1 = new Date(st_time).getUTCFullYear()
+                callback()
+        }
+        loadScript(startFunction)
+        function startFunction() {
+            var locSource = {};
+            var queryParams = window.location.search;
+            var listQueries = queryParams.split("&");
+            let params = new URLSearchParams(window.location.search)
+            console.log("queryParams", params.get('id'))
 
-                let effective_date1 = st_time.split("T");
+            fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
+                    },
 
-                let Opening_Date_Time1 = day1 + '/' + month1 + '/' + year1 + ' ' + effective_date1[1].split("+")[0];
+                })
+                .then((data) => {
+                    return data.json();
 
-                let start_Date = Opening_Date_Time1.split(".")[0];
-                console.log(start_Date, 'Start time')
+                }).then((dataresp) => {
+                    let data1 = ""
 
+                    let arry = dataresp.data[0].route_latlong;
+                    console.log("asdsadsdds",arry[arry.length - 2])
+                    // starting time lat & lng
+                    const st_time = arry[arry.length - 2].timestamp; 
+                    console.log('time ', st_time)
 
+                    let month1 = new Date(st_time).getUTCMonth() + 1 //months from 1-12
 
+                    let day1 = new Date(st_time).getUTCDate()
 
-                // End time lat & lng
-                const val = arry[arry.length - 2];
-                // console.log("====+++++", val.timestamp);
-                const dateformate = val.timestamp
-                const dt_fmt = dateformate.split('T')
-                // console.log('sadanand', dt_fmt[0])
+                    let year1 = new Date(st_time).getUTCFullYear()
 
-                let month = new Date(dateformate).getUTCMonth() + 1 //months from 1-12
+                    let effective_date1 = st_time.split("T");
 
-                let day = new Date(dateformate).getUTCDate()
+                    let Opening_Date_Time1 = day1 + '/' + month1 + '/' + year1 + ' ' + effective_date1[1].split("+")[0];
 
-                let year = new Date(dateformate).getUTCFullYear()
-
-                let effective_date = dateformate.split("T");
-
-                let Opening_Date_Time = day + '/' + month + '/' + year + ' ' + effective_date[1].split("+")[0];
-
-                let ExtractedFormatedDateL = Opening_Date_Time.split(".")[0];
-                console.log(ExtractedFormatedDateL, 'End time')
-
-
-
-
-
-
+                    let start_Date = Opening_Date_Time1.split(".")[0];
+                    console.log(start_Date, 'Start time')
 
 
-                //console.log("array data",dataresp.data[0].route_latlong)
-                // console.log("array length",dataresp.data[0].route_latlong.length)
-                // let arrlength =  dataresp.data[0].route_latlong.length;
-                // for(var a = arrlength; a<=0;a--){
-                //     console.log("rev data", dataresp.data[0].route_latlong[a])
-                // }
-                dataresp.data.map((item) => {
 
-                    console.log(item.route_latlong.length, 'wwwwww')
 
-                    data1 = `
+                    // End time lat & lng
+                    const val = arry[0];
+                    // console.log("====+++++", val.timestamp);
+                    const dateformate = val.timestamp
+                    const dt_fmt = dateformate.split('T')
+                    // console.log('sadanand', dt_fmt[0])
+
+                    let month = new Date(dateformate).getUTCMonth() + 1 //months from 1-12
+
+                    let day = new Date(dateformate).getUTCDate()
+
+                    let year = new Date(dateformate).getUTCFullYear()
+
+                    let effective_date = dateformate.split("T");
+
+                    let Opening_Date_Time = day + '/' + month + '/' + year + ' ' + effective_date[1].split("+")[0];
+
+                    let ExtractedFormatedDateL = Opening_Date_Time.split(".")[0];
+                    console.log(ExtractedFormatedDateL, 'End time')
+
+
+
+
+
+
+
+
+                    //console.log("array data",dataresp.data[0].route_latlong)
+                    // console.log("array length",dataresp.data[0].route_latlong.length)
+                    // let arrlength =  dataresp.data[0].route_latlong.length;
+                    // for(var a = arrlength; a<=0;a--){
+                    //     console.log("rev data", dataresp.data[0].route_latlong[a])
+                    // }
+                    dataresp.data.map((item) => {
+                        data1 = `
                 <nav class="navbar navbar-expand-lg bg-light shadow-sm">
                 <div class="container-fluid">
                     <img class="navbar-brand" src='image/logovishal.png' style="height:80px; width: 90px;"></img>
@@ -158,14 +195,14 @@
                                             </div>
 
                                         </li> -->
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
-                                                <div class="fw-bold"><img class="navbar-brand" src='image/mkr_start.png'
-                                                        style="height:20px; width: 20px;"> Delivery address</div>
-                                            ${item.source_address?.Adress} &nbsp; ${item.source_address?.house_no}
+                                    //    ${item.source_address?.Adress && `<li class="list-group-item d-flex justify-content-between align-items-start">
+                                    //         <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
+                                    //             <div class="fw-bold"><img class="navbar-brand" src='image/mkr_start.png'
+                                    //                     style="height:20px; width: 20px;"> Delivery address</div>
+                                    //         ${item.source_address?.Adress || ''} &nbsp; ${item.source_address?.house_no || ''}
 
-                                            </div>
-                                        </li>
+                                    //         </div>
+                                    //     </li>` } 
                                         <li class="list-group-item d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
                                                 <i class="fa fa-check" aria-hidden="true" style="color: green;"> ${item.delivery_status?.status}
@@ -183,7 +220,7 @@
                                                     
                                                     <img class="navbar-brand" src='image/clock-regular.svg'
                                                         style="height:20px; width: 20px;"> Delivery time</div>
-                                            <b>Started at :</b>  ${start_Date ? start_Date : 'N/A' }  &nbsp;  <br> <b>End at :</b> ${ExtractedFormatedDateL ? ExtractedFormatedDateL : 'N/A'}
+                                            <b>Started at :</b>  ${start_Date ? start_Date : 'N/A'}  &nbsp;  <br> <b>End at :</b> ${ExtractedFormatedDateL ? ExtractedFormatedDateL : 'N/A'}
                                             
                                      
 
@@ -202,135 +239,138 @@
 
                 </div>
             </div>`;
-                })
+                    })
 
-                document.getElementById("one_1", "map").innerHTML = data1
-
-
-            }).catch(err =>
-                console.error(err, 'qweqwqweqwq')
-            );
-
-        // }, 5000);
+                    document.getElementById("one_1", "map").innerHTML = data1
 
 
+                }).catch(err =>
+                    console.error(err, 'qweqwqweqwq')
+                );
+
+            // }, 5000);
 
 
-
+           
+        }
+      
         var map, polyline;
-        async function initMap1() {
-            // const token = localStorage.getItem('token')
-            // var a = document.getElementById("map").hidden("false")
-            var queryParams = window.location.search;
-            var listQueries = queryParams.split("&");
-            let params = new URLSearchParams(window.location.search)
-            console.log("queryParams", params.get('id'))
+            async function initMap1() {
+                // const token = localStorage.getItem('token')
+                // var a = document.getElementById("map").hidden("false")
+                var queryParams = window.location.search;
+                var listQueries = queryParams.split("&");
+                let params = new URLSearchParams(window.location.search)
+                console.log("queryParams", params.get('id'))
 
-            fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-type': 'application/json',
-                        'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
-                    },
-
-                }
-            ).then((data) => {
-                return data.json();
-                console.log('ssss', data)
-            }).then((dataresp) => {
-                // console.log(dataresp, '-----')
-
-                map = new mappls.Map('map', {
-                    center: [28.544, 77.5454],
-                    zoomControl: true,
-                    location: true
-                });
-
-                var dynamicPts = dataresp.data[0].route_latlong
-                var t = []
-
-                dataresp.data[0].route_latlong.map((item, index) => {
-                    console.log(item, 'lat lng time')
-                    if (item) {
-                        if (item.lat != 0 && item.lng != 0) {
-                            t.push({ 'lat': item?.lat, 'lng': item?.lng })
-                        }
+                fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json',
+                            'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
+                        },
 
                     }
-                })
+                ).then((data) => {
+                    return data.json();
+                    console.log('ssss', data)
+                }).then((dataresp) => {
+                    // console.log(dataresp, '-----')
 
+                    map = new mappls.Map('map', {
+                        center: [28.544, 77.5454],
+                        zoomControl: true,
+                        location: true
+                    });
 
-                var geoData = {
-                    "type": "FeatureCollection",
-                    "features": [{
-                        "type": "Feature",
-                        "properties": {
-                            "htmlPopup": "End",
-                            "icon": "image/resizedtr.png"
+                    var dynamicPts = dataresp.data[0].route_latlong
+                    var t = []
 
-                        },
-                        // start
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [t[t.length - 1].lat, t[t.length - 1].lng]
+                    dataresp.data[0].route_latlong.map((item, index) => {
+                        console.log(item, 'lat lng time')
+                        if (item) {
+                            if (item.lat != 0 && item.lng != 0) {
+                                t.push({ 'lat': item?.lat, 'lng': item?.lng })
+                            }
+
                         }
-                    }, {
-                        "type": "Feature",
-                        "properties": {
-                            "description": "Start",
-                            "icon": "image/resizedstr.png",
-                        },
-                        //stop
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [t[0].lat, t[0].lng]
-                        }
-                    }
-                    ]
-                };
+                    })
 
 
+                    var geoData = {
+                        "type": "FeatureCollection",
+                        "features": [{
+                            "type": "Feature",
+                            "properties": {
+                                "htmlPopup": "Start",
+                                "icon": "image/resizedtr.png"
 
-
-                map.addListener('load', async function () {
-                    var pts = t
-
-                    console.log("sda", t)
-
-                    var marker = mappls.Marker({
-                        map: map,
-                        position: geoData,
-                        // icon_url: 'image/start_route.png',
-                        // icon_url: 'image/vishal_mega.png',
-                        fitbounds: true,
-                        clusters: false,
-                        fitboundOptions: {
-                            padding: 120,
-                            duration: 1000
-                        },
-                        popupOptions: {
-                            offset: {
-                                'bottom': [0, -20]
+                            },
+                            // start
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [t[t.length - 1].lat, t[t.length - 1].lng]
+                            }
+                        }, {
+                            "type": "Feature",
+                            "properties": {
+                                "description": "End",
+                                "icon": "image/resizedstr.png",
+                            },
+                            //stop
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [t[0].lat, t[0].lng]
                             }
                         }
+                        ]
+                    };
+
+
+
+
+                    map.addListener('load', async function () {
+                        var pts = t
+
+                        console.log("sda", t)
+
+                        var marker = mappls.Marker({
+                            map: map,
+                            position: geoData,
+                            // icon_url: 'image/start_route.png',
+                            // icon_url: 'image/vishal_mega.png',
+                            fitbounds: true,
+                            clusters: false,
+                            fitboundOptions: {
+                                padding: 120,
+                                duration: 1000
+                            },
+                            popupOptions: {
+                                offset: {
+                                    'bottom': [0, -20]
+                                }
+                            }
+                        });
+
+                        polyline = new mappls.Polyline({
+                            map: map,
+                            // paths: pts,
+                            paths: pts,
+
+                            strokeColor: '#333',
+                            strokeOpacity: 1.0,
+                            strokeWeight: 5,
+                            fitbounds: true
+                        });
                     });
 
-                    polyline = new mappls.Polyline({
-                        map: map,
-                        // paths: pts,
-                        paths: pts,
 
-                        strokeColor: '#333',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 5,
-                        fitbounds: true
-                    });
                 });
+            }
 
 
-            });
-        }
+     
     </script>
 </body>
 

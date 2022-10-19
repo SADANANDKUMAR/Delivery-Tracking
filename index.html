@@ -51,7 +51,7 @@
 
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
@@ -71,18 +71,23 @@
 
     <!-- api for map  -->
 
-  
-    <script
+
+    <!-- <script
         src="https://apis.mappls.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk?layer=vector&v=3.0&callback=initMap1"></script>
     <script
         src="https://apis.mappls.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0"></script>
     <script
-        src="https://apis.mapmyindia.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0&libraries=direction"></script>
+        src="https://apis.mapmyindia.com/advancedmaps/api/5e28c14c-ef9e-4b9f-bcb4-cc70be4fcd53/map_sdk_plugins?v=3.0&libraries=direction"></script> -->
 
     <!-- api call  -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 
+    <script>
+
+      
+
+    </script>
 
 
 </head>
@@ -105,256 +110,294 @@
 <!-- js code here ............ -->
 <script>
     /*Map Initialization*/
+    function loadScript(callback) {
+            // adding the script element to the head as suggested before
 
-
-    // fetch("http://65.1.129.194:3000/getorderdetails/199")
-    //     .then(response => response.json())
-    //     .then(data =>
-    //         console.log(data)
-    //     )
-    //     .catch(err =>
-    //         console.error(err)
-    //     );
-
-    // window.setInterval(function(){
-    var locSource = {};
-
-    var queryParams = window.location.search;
-    var listQueries = queryParams.split("&");
-    let params = new URLSearchParams(window.location.search)
-    console.log("queryParams", params.get('id'))
-
-    fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
-    {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
-                },
-        
-            })
-        .then((data) => {
-            return data.json();
-            //  console.log('ssss',data)
-        }).then((dataresp) => {
-            let data1 = ""
-            dataresp.data.map((item) => {
-
-                if (dataresp.data[0].delivery_status?.status == 'DELIVERED') {
-
-                    clearInterval(add);
-                    let data2 = `
-                        <div class="container" style="background-color: #e9ecee;">
-    <nav class="navbar navbar-expand-lg bg-light shadow-sm">
-        <div class="container-fluid">
-            <img class="navbar-brand" src='image/logovishal.png' style="height:70px; width: 90px;"></img>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        </nav>
-
-        &nbsp; &nbsp;
-    <div class="card shadow p-3 mb-5 bg-body rounded"  style="width: 30rem;  margin-left: 24rem;">
-        <img src="image/vishal_mega.png" style="height:100px; width: 100px; margin-left : 165px; class="card-img-top " alt="...">
-        <div class="card-body">
-          <h5 class="card-title" style="color:#155ab1;">your order has been successfully delivered</h5>
-          <p class="card-text" >Thank you for your purchase. We love having customers like you. </p>
-          <a href="#" class="btn btn-primary">Visit</a>
-        </div>
-      </div>
-
-    </div>
-`
-                    setTimeout(() => {
-                        document.getElementById("one_1").innerHTML = data2
-                    }, 100);
-                }
-                console.log(item, 'wwww')
-                locSource = item.source_latlong;
-                data1 = `
-                <nav class="navbar navbar-expand-lg bg-light shadow-sm">
-                <div class="container-fluid">
-                    <img class="navbar-brand" src='image/logovishal.png' style="height:70px; width: 90px;"></img>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-                </nav>
-                &nbsp; &nbsp;
-                <div class="row">
-                <div class="col">
-                    <div id="map" style=" width:100%; height:75vh; display: inline-block; "></div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body shadow p-3 bg-white rounded">
-                            <h4 class="card font-italic font-weight-normal text-left">Order #${item?.order_id}</h4>
-                            <div class="row">
-                                <div class="col-sm">
-                                    <ol class="list-group list-group">
-
-                                        <!-- <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <PlaceIcon />
-                                            <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
-                                                <div class="fw-bold"> <img class="navbar-brand" src='mkr_start.png' style="height:20px; width: 20px;"></img>Office</div>
-                                                xyz, east patel nager
-                                            </div>
-
-                                        </li> -->
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
-                                                <div class="fw-bold"><img class="navbar-brand" src='image/mkr_start.png'
-                                                        style="height:20px; width: 20px;"> Delivery address</div>
-                                            ${item.source_address?.Adress} &nbsp; ${item.source_address?.house_no}
-
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
-                                                <i class="fa fa-check" aria-hidden="true" style="color: green;"> ${item.delivery_status?.status}
-                                                </i>
-                                                : &nbsp;
-                                            ${item.destination_address?.Adress}
-                                            ${item.destination_address?.house_no}
-                                                <span>by ${item.deleviery_boy_details?.name}  </span>
-                                            </div>
-                                        </li>
-                                    </ol>
-
-                                </div>
-                             
-                            </div>
-                            <br />
-                       
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>`;
-            })
-
-            document.getElementById("one_1", "map").innerHTML = data1
-            var one = dataresp.data[0].source_latlong.lat
-            var two = dataresp.data[0].source_latlong.lng
-            var three = dataresp.data[0].destination_latlong.lat
-            var four = dataresp.data[0].destination_latlong.lng
-            // var one = '28.63124010064198'  
-            // var two = '77.46734619140625'
-            // var three = '28.631541442089226'
-            // var four = '77.37808227539064'
-            initMap1(one, two, three, four)
-
-        }).catch(err =>
-            console.error(err, 'qweqwqweqwq')
-        );
-
-    // }, 5000);
-
-
-
-
-    var map, add, direction_plugin, c = 0, ll = [
-        // { lat: 28.63124010064198, lng: 77.46734619140625 },
-        // { lat: 28.63395214251842, lng: 77.4635696411133 },
-        // { lat: 28.634253476178397, lng: 77.45704650878908 },
-        // { lat: 28.634856140902432, lng: 77.44880676269533 },
-        // { lat: 28.635760131498788, lng: 77.44228363037111 },
-        // { lat: 28.637266765186347, lng: 77.43679046630861 },
-        // { lat: 28.637869412604015, lng: 77.43232727050783 },
-        // { lat: 28.639677334088308, lng: 77.42855072021486 },
-        // { lat: 28.640279967660007, lng: 77.42305755615236 },
-        // { lat: 28.640882597770116, lng: 77.41928100585939 },
-        // { lat: 28.640882597770116, lng: 77.41516113281251 },
-        // { lat: 28.640581283147768, lng: 77.40932464599611 },
-        // { lat: 28.63756808932784, lng: 77.40108489990236 },
-        // { lat: 28.635760131498788, lng: 77.39421844482423 },
-        // { lat: 28.634253476178397, lng: 77.38735198974611 },
-        // { lat: 28.631541442089226, lng: 77.37808227539064 },
-    ];
-
-    function initMap1(source_lat, source_long, destination_lat, destination_long) {
-        console.log("Check Map Argument", source_lat, source_long, destination_lat, destination_long)
-        if (source_lat) {
-            map = new mappls.Map('map', {
-                center: [28.09, 78.3],
-                zoom: 5
-            });
-            map.addListener('load', function () {
-                /*direction plugin initialization*/
-                var direction_option = {
-                    map: map,
-                    divWidth: '350px',
-                    start: { label: 'start', geoposition: `${source_lat},${source_long}` },
-                    end: { label: 'Reached', geoposition: `${destination_lat},${destination_long}` },
-                    start_icon: {
-                        url: "image/vishal_mega.png",
-                        width: 40, //optional
-                        height: 45 //optional
+            fetch(`http://65.1.129.194:3000/token`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
                     },
 
-                    steps: true,
-                    search: false,
-                    isDraggable: false,
-                    alternatives: false,
-                    callback: function (data) { }
-                }
-                direction_plugin = mappls.direction(direction_option);
-                console.log("SDSSDS", direction_plugin)
+                })
+                .then((data) => {
+                    return data.json();
+                    //  console.log('ssss',data)
+                }).then((dataresp) => {
+               
+                    const urlArray = ['https://apis.mappls.com/advancedmaps/api/api-token/map_sdk?layer=vector&v=3.0&callback=startFunction',
+                        'https://apis.mappls.com/advancedmaps/api/api-token/map_sdk_plugins?v=3.0',
+                        'https://apis.mapmyindia.com/advancedmaps/api/api-token/map_sdk_plugins?v=3.0&libraries=direction']
 
-                add = setInterval(() => {
-                    console.log("Refreshing data", direction_plugin)
-                    fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
-                    {
+                    urlArray.forEach(e => {
+                        var head = document.getElementsByTagName('head')[0];
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
+
+                        script.src = e.replace('api-token', dataresp.data[0].token.access_token);
+
+                        // then bind the event to the callback function 
+                        // there are several events for cross browser compatibility
+                        script.onreadystatechange = callback;
+                        script.onload = callback;
+                        console.log(script.src)
+                        // fire the loading
+                        head.appendChild(script);
+                    })
+
+
+                })
+                // callback()
+        }
+        
+
+        loadScript(startFunction)
+
+
+    function startFunction() {
+        var locSource = {};
+
+        var queryParams = window.location.search;
+        var listQueries = queryParams.split("&");
+        let params = new URLSearchParams(window.location.search)
+        console.log("queryParams", params.get('id'))
+
+        fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
+            {
                 method: 'GET',
                 headers: {
                     'Content-type': 'application/json',
                     'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
                 },
-        
+
+            })
+            .then((data) => {
+                return data.json();
+                //  console.log('ssss',data)
+            }).then((dataresp) => {
+                let data1 = ""
+                dataresp.data.map((item) => {
+
+                    if (dataresp.data[0].delivery_status?.status == 'DELIVERED') {
+
+                        clearInterval(add);
+                        let data2 = `
+                    <div class="container" style="background-color: #e9ecee;">
+<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+    <div class="container-fluid">
+        <img class="navbar-brand" src='image/logovishal.png' style="height:70px; width: 90px;"></img>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+    </nav>
+
+    &nbsp; &nbsp;
+<div class="card shadow p-3 mb-5 bg-body rounded"  style="width: 30rem;  margin-left: 24rem;">
+    <img src="image/vishal_mega.png" style="height:100px; width: 100px; margin-left : 165px; class="card-img-top " alt="...">
+    <div class="card-body">
+      <h5 class="card-title" style="color:#155ab1;">your order has been successfully delivered</h5>
+      <p class="card-text" >Thank you for your purchase. We love having customers like you. </p>
+      <a href="#" class="btn btn-primary">Visit</a>
+    </div>
+  </div>
+
+</div>
+`
+                        setTimeout(() => {
+                            document.getElementById("one_1").innerHTML = data2
+                        }, 100);
+                    }
+                    console.log(item, 'wwww')
+                    locSource = item.source_latlong;
+                    data1 = `
+            <nav class="navbar navbar-expand-lg bg-light shadow-sm">
+            <div class="container-fluid">
+                <img class="navbar-brand" src='image/logovishal.png' style="height:70px; width: 90px;"></img>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            </nav>
+            &nbsp; &nbsp;
+            <div class="row">
+            <div class="col">
+                <div id="map" style=" width:100%; height:75vh; display: inline-block; "></div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body shadow p-3 bg-white rounded">
+                        <h4 class="card font-italic font-weight-normal text-left">Order #${item?.order_id}</h4>
+                        <div class="row">
+                            <div class="col-sm">
+                                <ol class="list-group list-group">
+
+                                    <!-- <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <PlaceIcon />
+                                        <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
+                                            <div class="fw-bold"> <img class="navbar-brand" src='mkr_start.png' style="height:20px; width: 20px;"></img>Office</div>
+                                            xyz, east patel nager
+                                        </div>
+
+                                    </li> -->
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
+                                            <div class="fw-bold"><img class="navbar-brand" src='image/mkr_start.png'
+                                                    style="height:20px; width: 20px;"> Delivery address</div>
+                                        ${item.source_address?.Adress} &nbsp; ${item.source_address?.house_no}
+
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto fw-lighter" style="font-size: '0.7rem' ;">
+                                            <i class="fa fa-check" aria-hidden="true" style="color: green;"> ${item.delivery_status?.status}
+                                            </i>
+                                            : &nbsp;
+                                        ${item.destination_address?.Adress}
+                                        ${item.destination_address?.house_no}
+                                            <span>by ${item.deleviery_boy_details?.name}  </span>
+                                        </div>
+                                    </li>
+                                </ol>
+
+                            </div>
+                         
+                        </div>
+                        <br />
+                   
+
+                    </div>
+                </div>
+
+            </div>
+        </div>`;
+                })
+
+                document.getElementById("one_1", "map").innerHTML = data1
+                var one = dataresp.data[0].source_latlong.lat
+                var two = dataresp.data[0].source_latlong.lng
+                var three = dataresp.data[0].destination_latlong.lat
+                var four = dataresp.data[0].destination_latlong.lng
+                // var one = '28.63124010064198'  
+                // var two = '77.46734619140625'
+                // var three = '28.631541442089226'
+                // var four = '77.37808227539064'
+                initMap1(one, two, three, four)
+
+            }).catch(err =>
+                console.error(err, 'qweqwqweqwq')
+            );
+
+        // }, 5000);
+
+
+
+
+        var map, add, direction_plugin, c = 0, ll = [
+            // { lat: 28.63124010064198, lng: 77.46734619140625 },
+            // { lat: 28.63395214251842, lng: 77.4635696411133 },
+            // { lat: 28.634253476178397, lng: 77.45704650878908 },
+            // { lat: 28.634856140902432, lng: 77.44880676269533 },
+            // { lat: 28.635760131498788, lng: 77.44228363037111 },
+            // { lat: 28.637266765186347, lng: 77.43679046630861 },
+            // { lat: 28.637869412604015, lng: 77.43232727050783 },
+            // { lat: 28.639677334088308, lng: 77.42855072021486 },
+            // { lat: 28.640279967660007, lng: 77.42305755615236 },
+            // { lat: 28.640882597770116, lng: 77.41928100585939 },
+            // { lat: 28.640882597770116, lng: 77.41516113281251 },
+            // { lat: 28.640581283147768, lng: 77.40932464599611 },
+            // { lat: 28.63756808932784, lng: 77.40108489990236 },
+            // { lat: 28.635760131498788, lng: 77.39421844482423 },
+            // { lat: 28.634253476178397, lng: 77.38735198974611 },
+            // { lat: 28.631541442089226, lng: 77.37808227539064 },
+        ];
+
+        function initMap1(source_lat, source_long, destination_lat, destination_long) {
+            console.log("Check Map Argument", source_lat, source_long, destination_lat, destination_long)
+            if (source_lat) {
+                map = new mappls.Map('map', {
+                    center: [28.09, 78.3],
+                    zoom: 5
+                });
+                map.addListener('load', function () {
+                    /*direction plugin initialization*/
+                    var direction_option = {
+                        map: map,
+                        divWidth: '350px',
+                        start: { label: 'start', geoposition: `${source_lat},${source_long}` },
+                        end: { label: 'Reached', geoposition: `${destination_lat},${destination_long}` },
+                        start_icon: {
+                            url: "image/vishal_mega.png",
+                            width: 40, //optional
+                            height: 45 //optional
+                        },
+
+                        zoomControl: true,
+                        steps: true,
+                        search: false,
+                        isDraggable: false,
+                        alternatives: false,
+                        callback: function (data) { }
+                    }
+                    direction_plugin = mappls.direction(direction_option);
+                    console.log("SDSSDS", direction_plugin)
+
+                    add = setInterval(() => {
+                        console.log("Refreshing data", direction_plugin)
+                        fetch(`http://65.1.129.194:3000/getorderdetails/${params.get('id')}`,
+                            {
+                                method: 'GET',
+                                headers: {
+                                    'Content-type': 'application/json',
+                                    'Authorization': `Bearer hcjsdbshhsbdcjbsjjbsbbdibjnssxjudqwnanjnxjsjxcceuhfbdsqklhgyxrdrxsx`, // notice the Bearer before your token
+                                },
+
+                            }
+                        )
+                            .then((data) => {
+                                return data.json();
+                                //  console.log('ssss',data)
+                            })
+                            .then((dataresp) => {
+                                console.log(dataresp, 'qqqqq')
+                                console.log("Refresh response ", dataresp.data)
+                                console.log("direction_plugin", direction_plugin)
+                                direction_plugin.tracking({
+                                    location: dataresp.data[0].source_latlong,
+                                    label: 'current location',
+                                    // icon: "vishal_mega.png",
+                                    heading: false,
+                                    reRoute: true,
+                                    fitBounds: true,
+                                    animationSpeed: 5,
+                                    delay: 2000,
+
+                                });
+                                //                             if (dataresp.data[0].delivery_status?.status == 'Delivered') {
+
+                                //                                 clearInterval(add);
+                                //                                 setTimeout(() => {
+                                //                                     document.write(`
+
+                                //                                 <div class="container">
+                                //                             <div class="card" style="width: 18rem;">
+                                //   <img src="image/SessionExpired.png" class="card-img-top" alt="..." style="margin-left: 24rem;">
+                                // </div></div>
+                                //                                 `)
+                                //                                 }, 100);
+                                //                             }
+                            })
+                    }, 10000);
+                });
+
             }
-                    )
-                        .then((data) => {
-                            return data.json();
-                            //  console.log('ssss',data)
-                        })
-                        .then((dataresp) => {
-                            console.log(dataresp, 'qqqqq')
-                            console.log("Refresh response ", dataresp.data)
-                            console.log("direction_plugin", direction_plugin)
-                            direction_plugin.tracking({
-                                location: dataresp.data[0].source_latlong,
-                                label: 'current location',
-                                // icon: "vishal_mega.png",
-                                heading: false,
-                                reRoute: true,
-                                fitBounds: true,
-                                animationSpeed: 5,
-                                delay: 2000,
 
-                            });
-                            //                             if (dataresp.data[0].delivery_status?.status == 'Delivered') {
-
-                            //                                 clearInterval(add);
-                            //                                 setTimeout(() => {
-                            //                                     document.write(`
-
-                            //                                 <div class="container">
-                            //                             <div class="card" style="width: 18rem;">
-                            //   <img src="image/SessionExpired.png" class="card-img-top" alt="..." style="margin-left: 24rem;">
-                            // </div></div>
-                            //                                 `)
-                            //                                 }, 100);
-                            //                             }
-                        })
-                }, 10000);
-            });
 
         }
-
 
     }
 
